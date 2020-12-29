@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wmq="http://www.mulesoft.org/schema/mule/ee/wmq" xmlns:secure-property-placeholder="http://www.mulesoft.org/schema/mule/secure-property-placeholder" xmlns:context="http://www.springframework.org/schema/context" xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/secure-property-placeholder http://www.mulesoft.org/schema/mule/secure-property-placeholder/current/mule-secure-property-placeholder.xsd
+http://www.mulesoft.org/schema/mule/ee/wmq http://www.mulesoft.org/schema/mule/ee/wmq/current/mule-wmq-ee.xsd">
+    <wmq:connector name="WMQ" hostName="localhost" port="1414" queueManager="QM1" channel="DEV.APP.SVRCONN" username="mqclientapp" password="changeit" transportType="CLIENT_MQ_TCPIP" validateConnections="true" doc:name="WMQ"/>
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8089" doc:name="HTTP Listener Configuration"/>
+    <flow name="assign1Flow">
+        <wmq:inbound-endpoint queue="DEV.QUEUE.1" connector-ref="WMQ" doc:name="WMQ"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="assign1Flow1">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/post" doc:name="HTTP"/>
+        <logger level="INFO" doc:name="Logger"/>
+        <byte-array-to-string-transformer doc:name="Byte Array to String"/>
+        <wmq:outbound-endpoint queue="DEV.QUEUE.1" connector-ref="WMQ" doc:name="WMQ"/>
+        <logger message="submmitted" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>

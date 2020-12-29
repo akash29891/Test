@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+<file:connector name="File" autoDelete="true" streaming="false" validateConnections="true" doc:name="File" outputAppend="true"/>
+    <choice-exception-strategy name="globalChoice_Exception_Strategy">
+        <catch-exception-strategy when="#[exception.causedBy(com.mulesoft.weave.mule.exception.WeaveExecutionException)]" doc:name="Dataweave Exception Strategy">
+            <logger message="In File Exception" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+        <catch-exception-strategy when="#[exception.causedBy(java.net.ConnectException)]" doc:name="HTTP  Exception Strategy">
+            <logger message="In HTTP Exception" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <logger message="In Default " level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+    </choice-exception-strategy>
+
+</mule>
